@@ -24,16 +24,34 @@ class ExpenseController {
     // Get all expenses with filtering, sorting, and pagination
     async getExpenses(req, res) {
         try {
-            const { category, startDate, endDate, paymentMethod, sortBy, page = 1, limit = 10 } = req.query;
+            const { search, category, startDate, endDate, paymentMethod, sortBy, page = 1, limit = 10 } = req.query;
 
             const query = {};
 
-            if (category) query.category = category;
-            if (paymentMethod) query.paymentMethod = paymentMethod;
-            if (startDate && endDate) query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+            // Global search across multiple fields
+            if (search) {
+                const searchRegex = new RegExp(search, 'i');  // 'i' for case-insensitive search
+                query.$or = [
+                    { description: { $regex: searchRegex } },
+                    { category: { $regex: searchRegex } },
+                    { paymentMethod: { $regex: searchRegex } }
+                ];
+            }
 
+            // Filter by category if provided
+            if (category) query.category = { $regex: new RegExp(category, 'i') };  // 'i' for case-insensitive
+
+            // Filter by paymentMethod if provided
+            if (paymentMethod) query.paymentMethod = { $regex: new RegExp(paymentMethod, 'i') };  // 'i' for case-insensitive
+
+            // Filter by date range if provided
+            if (startDate && endDate) {
+                query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+            }
+
+            // Find expenses with the query
             const expenses = await Expense.find(query)
-                .sort(sortBy || { date: -1 })
+                .sort(sortBy || { date: -1 })  // Default sorting by date
                 .skip((page - 1) * limit)
                 .limit(Number(limit));
 
@@ -49,6 +67,8 @@ class ExpenseController {
             res.status(500).json({ message: 'Failed to fetch expenses', error });
         }
     }
+
+
 
     // Update an expense
     async updateExpense(req, res) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import useAuthStore from '../store/authStore';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const ExpenseList = () => {
     const { user } = useAuthStore();
@@ -9,8 +10,11 @@ const ExpenseList = () => {
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const [sortOrder, setSortOrder] = useState('date');
     const [searchQuery, setSearchQuery] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [paymentMethodFilter, setPaymentMethodFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchExpenses = async () => {
@@ -23,7 +27,9 @@ const ExpenseList = () => {
                         },
                         params: {
                             page: currentPage,
-                            sort: sortOrder,
+                            sortBy: sortOrder,
+                            category: categoryFilter,
+                            paymentMethod: paymentMethodFilter,
                             search: searchQuery,
                         },
                     }
@@ -38,7 +44,7 @@ const ExpenseList = () => {
         };
 
         fetchExpenses();
-    }, [user, currentPage, sortOrder, searchQuery]);
+    }, [user, currentPage, sortOrder, searchQuery, categoryFilter, paymentMethodFilter]);
 
     const handleSort = (field) => {
         setSortOrder(field);
@@ -48,8 +54,37 @@ const ExpenseList = () => {
         setSearchQuery(e.target.value);
     };
 
+    const handleCategoryFilter = (e) => {
+        setCategoryFilter(e.target.value);
+    };
+
+    const handlePaymentMethodFilter = (e) => {
+        setPaymentMethodFilter(e.target.value);
+    };
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
+    };
+
+    const handleDelete = async (expenseId) => {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_BACKEND_API_URL}/api/expenses/${expenseId}`,
+                {
+                    headers: { Authorization: `Bearer ${user.token}` },
+                }
+            );
+            toast.success('Expense deleted successfully');
+            setExpenses((prev) => prev.filter((expense) => expense._id !== expenseId));
+            setFilteredExpenses((prev) => prev.filter((expense) => expense._id !== expenseId));
+        } catch (error) {
+            toast.error('Error deleting expense');
+            console.error('Error deleting expense:', error);
+        }
+    };
+
+    const handleEdit = (expenseId) => {
+        navigate(`/edit-expense/${expenseId}`);
     };
 
     return (
@@ -65,6 +100,33 @@ const ExpenseList = () => {
                     onChange={handleSearch}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
                 />
+            </div>
+
+            {/* Filters */}
+            <div className="flex space-x-4 mb-6">
+                <select
+                    onChange={handleCategoryFilter}
+                    value={categoryFilter}
+                    className="px-4 py-2 border border-gray-300 rounded-md"
+                >
+                    <option value="">All Categories</option>
+                    <option value="Food">Food</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Entertainment">Entertainment</option>
+                    {/* Add more categories as needed */}
+                </select>
+
+                <select
+                    onChange={handlePaymentMethodFilter}
+                    value={paymentMethodFilter}
+                    className="px-4 py-2 border border-gray-300 rounded-md"
+                >
+                    <option value="">All Payment Methods</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    {/* Add more payment methods as needed */}
+                </select>
             </div>
 
             {/* Sort Options */}
@@ -99,6 +161,7 @@ const ExpenseList = () => {
                             <th className="px-6 py-3 text-left text-sm font-medium">Date</th>
                             <th className="px-6 py-3 text-left text-sm font-medium">Category</th>
                             <th className="px-6 py-3 text-left text-sm font-medium">Payment Method</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,10 +171,24 @@ const ExpenseList = () => {
                                 className="border-b hover:bg-gray-50 text-gray-800"
                             >
                                 <td className="px-6 py-4">{expense.description}</td>
-                                <td className="px-6 py-4">${expense.amount}</td>
+                                <td className="px-6 py-4">{expense.amount}</td>
                                 <td className="px-6 py-4">{expense.date}</td>
                                 <td className="px-6 py-4">{expense.category}</td>
                                 <td className="px-6 py-4">{expense.paymentMethod}</td>
+                                <td className="px-6 py-4 space-x-2">
+                                    <button
+                                        onClick={() => handleEdit(expense._id)}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(expense._id)}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
