@@ -30,12 +30,13 @@ function App() {
           console.error('Error checking authentication status:', error);
           logout();
         }
+      } finally {
+        useAuthStore.getState().setLoading(false); // Ensure loading is set to false
       }
     };
 
     checkAuthStatus();
   }, [login, logout]);
-
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-violet-50">
