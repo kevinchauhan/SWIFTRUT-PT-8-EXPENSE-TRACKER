@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ExpenseList from './pages/ExpenseList';
+import AddExpense from './pages/AddExpense';
+import ProtectedRoute from './components/ProtectedRoute';
 import axios from 'axios';
 import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
@@ -17,7 +20,6 @@ function App() {
     const checkAuthStatus = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/api/auth/self`);
-
         if (response.status === 200) {
           login(response.data);
         }
@@ -31,7 +33,6 @@ function App() {
       }
     };
 
-
     checkAuthStatus();
   }, [login, logout]);
 
@@ -43,6 +44,10 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+
+            {/* Protected routes for expense-related pages */}
+            <Route path="/expenses" element={<ProtectedRoute><ExpenseList /></ProtectedRoute>} />
+            <Route path="/add-expense" element={<ProtectedRoute><AddExpense /></ProtectedRoute>} />
           </Routes>
         </main>
       </div>
