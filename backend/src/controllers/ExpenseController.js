@@ -1,4 +1,4 @@
-import Expense from '../models/expenseModel.js';
+import Expense from '../models/Expense.js';
 
 class ExpenseController {
     // Add a new expense
@@ -99,4 +99,4 @@ class ExpenseController {
     }
 }
 
-export default ExpenseController();
+export default ExpenseController;
