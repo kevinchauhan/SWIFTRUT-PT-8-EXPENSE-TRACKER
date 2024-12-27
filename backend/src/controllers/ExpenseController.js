@@ -97,6 +97,25 @@ class ExpenseController {
             res.status(500).json({ message: 'Failed to delete expenses', error });
         }
     }
+
+    // Get an expense by its ID
+    async getExpenseById(req, res) {
+        try {
+            const { expenseId } = req.params;
+
+            // Find the expense by its ID
+            const expense = await Expense.findById(expenseId);
+
+            if (!expense) {
+                return res.status(404).json({ message: 'Expense not found' });
+            }
+
+            res.status(200).json(expense);
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch expense', error });
+        }
+    }
+
 }
 
 export default ExpenseController;

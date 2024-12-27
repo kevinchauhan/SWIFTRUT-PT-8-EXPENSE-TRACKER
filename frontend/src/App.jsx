@@ -10,6 +10,7 @@ import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Dashboard from './pages/Dashboard';
+import EditExpense from './pages/EditExpense';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -49,6 +50,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/expenses" element={<ProtectedRoute><ExpenseList /></ProtectedRoute>} />
             <Route path="/add-expense" element={<ProtectedRoute><AddExpense /></ProtectedRoute>} />
+            <Route path="/edit-expense/:id" element={<ProtectedRoute><EditExpense /></ProtectedRoute>} />
           </Routes>
         </main>
       </div>
