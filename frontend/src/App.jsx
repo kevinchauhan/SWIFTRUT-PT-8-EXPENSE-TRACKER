@@ -9,6 +9,7 @@ import axios from 'axios';
 import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -43,10 +44,9 @@ function App() {
         <Header />
         <main className="flex-grow container mx-auto px-4 py-6">
           <Routes>
+            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-
-            {/* Protected routes for expense-related pages */}
             <Route path="/expenses" element={<ProtectedRoute><ExpenseList /></ProtectedRoute>} />
             <Route path="/add-expense" element={<ProtectedRoute><AddExpense /></ProtectedRoute>} />
           </Routes>

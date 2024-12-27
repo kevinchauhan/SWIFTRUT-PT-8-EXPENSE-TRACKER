@@ -32,14 +32,7 @@ const Header = () => {
                 <nav>
                     <ul className="flex space-x-6 items-center text-sm font-medium">
                         {/* Public Links */}
-                        <li>
-                            <Link
-                                to="/"
-                                className="text-white hover:text-gray-300 transition duration-200 focus:outline-none"
-                            >
-                                Home
-                            </Link>
-                        </li>
+
                         {!isAuthenticated ? (
                             <>
                                 <li>
@@ -61,21 +54,12 @@ const Header = () => {
                             </>
                         ) : (
                             <>
-                                {/* Authenticated Links */}
                                 <li>
                                     <Link
-                                        to="/dashboard"
+                                        to="/"
                                         className="text-white hover:text-gray-300 transition duration-200 focus:outline-none"
                                     >
                                         Dashboard
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        to="/add-expense"
-                                        className="text-white hover:text-gray-300 transition duration-200 focus:outline-none"
-                                    >
-                                        Add Expense
                                     </Link>
                                 </li>
                                 {/* User Dropdown */}
@@ -96,6 +80,15 @@ const Header = () => {
                                                     onClick={() => setDropdownOpen(false)}
                                                 >
                                                     My Expenses
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    to="/add-expense"
+                                                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setDropdownOpen(false)}
+                                                >
+                                                    Add Expense
                                                 </Link>
                                             </li>
                                             <li>
