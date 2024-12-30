@@ -35,5 +35,5 @@ This is a full-stack Expense Tracker Application that allows users to manage and
   - JSON Web Tokens (JWT) for authentication
 
 - **Deployment**:
-  - Frontend: [https://swiftrut-pt-7-e-library.vercel.app](https://swiftrut-pt-8-expense-tracker.vercel.app)
-  - Backend: [https://swiftrut-pt-7-e-library.onrender.com](https://swiftrut-pt-8-expense-tracker.onrender.com)
+  - Frontend: [https://swiftrut-pt-8-expense-tracker.vercel.app](https://swiftrut-pt-8-expense-tracker.vercel.app)
+  - Backend: [https://swiftrut-pt-8-expense-tracker.onrender.com](https://swiftrut-pt-8-expense-tracker.onrender.com)
